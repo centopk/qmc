@@ -3,6 +3,8 @@ import esphome.config_validation as cv
 from esphome.components import i2c, sensor
 from esphome.const import (
     CONF_ID,
+    CONF_ADDRESS,
+    CONF_UPDATE_INTERVAL,
     DEVICE_CLASS_MAGNETIC_FIELD,
     STATE_CLASS_MEASUREMENT,
     UNIT_MICROTESLA,
