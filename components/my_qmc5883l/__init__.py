@@ -9,7 +9,7 @@ from esphome.const import (
     UNIT_MICROTESLA,
 )
 
-DEPENDENCIES = ["i2c"]
+DEPENDENCIES = ["i2c", "sensor"]
 AUTO_LOAD = ["sensor"]
 
 my_qmc5883l_ns = cg.esphome_ns.namespace("my_qmc5883l")
