@@ -17,51 +17,34 @@ class MyQMC5883LComponent : public PollingComponent, public i2c::I2CDevice {
   void set_z_sensor(sensor::Sensor *s) { z_sensor_ = s; }
 
   void setup() override {
-    ESP_LOGCONFIG(TAG, "Setting up QMC5883L...");
-
-    // Soft reset
-    auto err = write_reg_(0x0D, 0x80);
-    ESP_LOGD(TAG, "Soft reset: %d", err);
+    ESP_LOGE(TAG, "SETUP CALLED addr=0x%02X", this->address_);
+    write_reg_(0x0D, 0x80);
     delay(100);
-
-    // Set/Reset Period
-    err = write_reg_(0x0A, 0x01);
-    ESP_LOGD(TAG, "Set/Reset Period reg 0x0A: %d", err);
+    write_reg_(0x0A, 0x01);
     delay(50);
-
-    // CR1: Continuous, +-8G, 50Hz, OSR=512
-    err = write_reg_(0x0B, 0x1D);
-    ESP_LOGD(TAG, "CR1 reg 0x0B: %d", err);
+    write_reg_(0x0B, 0x1D);
     delay(50);
-
-    // CR2: no interrupts
-    err = write_reg_(0x0C, 0x00);
-    ESP_LOGD(TAG, "CR2 reg 0x0C: %d", err);
+    write_reg_(0x0C, 0x00);
     delay(100);
-
-    ESP_LOGCONFIG(TAG, "QMC5883L setup done");
+    ESP_LOGE(TAG, "SETUP DONE");
   }
 
   void update() override {
+    ESP_LOGE(TAG, "UPDATE CALLED");
     uint8_t reg = 0x00;
-    auto err = this->write(&reg, 1);
-    if (err != i2c::ERROR_OK) {
-      ESP_LOGW(TAG, "Write failed: %d", err);
+    if (this->write(&reg, 1) != i2c::ERROR_OK) {
+      ESP_LOGE(TAG, "Write failed");
       return;
     }
     uint8_t data[6];
-    err = this->read(data, 6);
-    if (err != i2c::ERROR_OK) {
-      ESP_LOGW(TAG, "Read failed: %d", err);
+    if (this->read(data, 6) != i2c::ERROR_OK) {
+      ESP_LOGE(TAG, "Read failed");
       return;
     }
-
     int16_t x = (int16_t)(data[0] | (data[1] << 8));
     int16_t y = (int16_t)(data[2] | (data[3] << 8));
     int16_t z = (int16_t)(data[4] | (data[5] << 8));
-
-    ESP_LOGD(TAG, "Raw X=%d Y=%d Z=%d", x, y, z);
-
+    ESP_LOGE(TAG, "X=%d Y=%d Z=%d", x, y, z);
     if (x_sensor_) x_sensor_->publish_state(x * 0.03333f);
     if (y_sensor_) y_sensor_->publish_state(y * 0.03333f);
     if (z_sensor_) z_sensor_->publish_state(z * 0.03333f);
@@ -74,9 +57,9 @@ class MyQMC5883LComponent : public PollingComponent, public i2c::I2CDevice {
   sensor::Sensor *y_sensor_{nullptr};
   sensor::Sensor *z_sensor_{nullptr};
 
-  i2c::ErrorCode write_reg_(uint8_t reg, uint8_t val) {
+  void write_reg_(uint8_t reg, uint8_t val) {
     uint8_t buf[2] = {reg, val};
-    return this->write(buf, 2);
+    this->write(buf, 2);
   }
 };
 
