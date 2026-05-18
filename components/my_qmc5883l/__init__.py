@@ -3,7 +3,6 @@ import esphome.config_validation as cv
 from esphome.components import i2c, sensor
 from esphome.const import (
     CONF_ID,
-    CONF_NAME,
     DEVICE_CLASS_MAGNETIC_FIELD,
     STATE_CLASS_MEASUREMENT,
     UNIT_MICROTESLA,
@@ -31,9 +30,9 @@ _SENSOR_SCHEMA = sensor.sensor_schema(
 CONFIG_SCHEMA = (
     cv.Schema({
         cv.GenerateID(): cv.declare_id(MyQMC5883LComponent),
-        cv.Optional(CONF_X, default={CONF_NAME: "Mag X"}): _SENSOR_SCHEMA,
-        cv.Optional(CONF_Y, default={CONF_NAME: "Mag Y"}): _SENSOR_SCHEMA,
-        cv.Optional(CONF_Z, default={CONF_NAME: "Mag Z"}): _SENSOR_SCHEMA,
+        cv.Optional(CONF_X, default={"name": "Mag X"}): _SENSOR_SCHEMA,
+        cv.Optional(CONF_Y, default={"name": "Mag Y"}): _SENSOR_SCHEMA,
+        cv.Optional(CONF_Z, default={"name": "Mag Z"}): _SENSOR_SCHEMA,
     })
     .extend(cv.polling_component_schema("100ms"))
     .extend(i2c.i2c_device_schema(0x2C))
