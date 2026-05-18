@@ -36,7 +36,7 @@ CONFIG_SCHEMA = (
         cv.Optional(CONF_Z, default={CONF_NAME: "Mag Z"}): _SENSOR_SCHEMA,
     })
     .extend(cv.polling_component_schema("100ms"))
-    .extend(i2c.i2c_device_schema(0x2C))
+    .extend(i2c.i2c_device_schema(0x2C))  # адрес 0x2C по умолчанию
 )
 
 
